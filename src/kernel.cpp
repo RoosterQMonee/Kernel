@@ -1,11 +1,3 @@
-/*
-
-    This is just from wiki.osdev.org
-    i spent multiple hours trying to set up compilers for windows :(
-
-*/
-
-
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -104,5 +96,5 @@ void terminal_writestring(const char* data)
 extern "C" void kmain(void) 
 {
 	terminal_initialize();
-	terminal_writestring("Hello, World!\n");
+	terminal_writestring("Hello, World!");
 }
