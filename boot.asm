@@ -1,32 +1,45 @@
-.set ALIGN,    1<<0             /* align loaded modules on page boundaries */
-.set MEMINFO,  1<<1             /* provide memory map */
-.set FLAGS,    ALIGN | MEMINFO  /* this is the Multiboot 'flag' field */
-.set MAGIC,    0x1BADB002       /* 'magic number' lets bootloader find the header */
-.set CHECKSUM, -(MAGIC + FLAGS) /* checksum of above, to prove we are multiboot */
+MBALIGN  equ  1 << 0
+MEMINFO  equ  1 << 1
+MBFLAGS  equ  MBALIGN | MEMINFO
+MAGIC    equ  0x1BADB002
+CHECKSUM equ -(MAGIC + MBFLAGS)
 
-.section .multiboot
-.align 4
-	.long MAGIC
-	.long FLAGS
-	.long CHECKSUM
+BOOTLOADER_MAGIC  equ  0x2BADB002
 
-.section .bss
-.align 16
+extern kmain
+
+section .multiboot
+  align 4
+	dd MAGIC
+	dd MBFLAGS
+	dd CHECKSUM
+
+
+section .bss
+
+align 16
 stack_bottom:
-.skip 16384 # 16 KiB
+
+resb 1048576 ; 1 MiB
 stack_top:
 
-.section .text
-.global _start
-.type _start, @function
+
+section .text
+    global _start: function (_start.end - _start)
+    global MAGIC_HEADER
+    global BOOTLOADER_MAGIC
 
 _start:
-	mov $stack_top, %esp
-	call kernel_main
+	mov esp, stack_top
 
+	mov eax, BOOTLOADER_MAGIC
+	push ebx
+	push eax
+  
+	call kmain
 	cli
-	
-1:	hlt
-	jmp 1b
 
-.size _start, . - _start
+.hang:	hlt
+	jmp .hang
+
+.end:

@@ -101,7 +101,7 @@ void terminal_writestring(const char* data)
 	terminal_write(data, strlen(data));
 }
  
-void kernel_main(void) 
+extern "C" void kmain(void) 
 {
 	terminal_initialize();
 	terminal_writestring("Hello, kernel World!\n");

@@ -1,13 +1,14 @@
 .PHONY: build
 
-OBJFILES := $(shell find ./build -type f -name "\*.o")
-# /home/nam/opt/cross/bin Replace this with your cross compiler location (idrk how to use makefiles :[)
+BUILDDIR = build
+OBJFILES := $(shell find $(BUILDDIR) -name '*.o')
 
 assembly:
-	as boot.asm -o ./build/boot.o
+	nasm -f elf32 boot.asm -o build/boot.o
 
 source:
-	g++ -c kernel.cpp -o ./build/kernel.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
+	g++ -c kernel.cpp -o ./build/kernel.o -O2 -Wall
+	g++ ./build/kernel.o
 
 clean:
 	rm -rf ./build
@@ -17,7 +18,7 @@ clean:
 	mkdir ./bin
 
 build:
-	g++ -T linker.ld -o ./bin/os.bin -ffreestanding -O2 -nostdlib $(OBJFILES) -lgcc
+	ld -T linker.ld -o os.bin -static -nostdlib $(OBJFILES) -melf_i386
 
 run:
 	$(MAKE) clean
@@ -30,4 +31,4 @@ run:
 	cp grub.cfg isodir/boot/grub/grub.cfg
 	grub-mkrescue -o bin/os.iso isodir
 
-	qemu-system-i386 -cdrom bin/os.iso
+	qemu-system-i386 -cdrom bin/os.iso -serial file:serial.log
