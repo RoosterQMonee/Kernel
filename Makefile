@@ -7,8 +7,7 @@ assembly:
 	nasm -f elf32 boot.asm -o build/boot.o
 
 source:
-	g++ -c kernel.cpp -o ./build/kernel.o -O2 -Wall
-	g++ ./build/kernel.o
+	g++ -c kernel.cpp -o ./build/kernel.o -O2 -Wall -m32
 
 clean:
 	rm -rf ./build
@@ -18,7 +17,7 @@ clean:
 	mkdir ./bin
 
 build:
-	ld -T linker.ld -o os.bin -static -nostdlib $(OBJFILES) -melf_i386
+	ld -T linker.ld -o bin/os.bin -static -nostdlib $(OBJFILES) -melf_i386
 
 run:
 	$(MAKE) clean
