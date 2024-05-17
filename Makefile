@@ -4,10 +4,10 @@ BUILDDIR = build
 OBJFILES := $(shell find $(BUILDDIR) -name '*.o')
 
 assembly:
-	nasm -f elf32 boot.asm -o build/boot.o
+	nasm -f elf32 src/boot.asm -o build/boot.o
 
 source:
-	g++ -c kernel.cpp -o ./build/kernel.o -O2 -Wall -m32
+	g++ -c src/kernel.cpp -o ./build/kernel.o -O2 -Wall -m32
 
 clean:
 	rm -rf ./build
